@@ -6,6 +6,8 @@ import { playground } from "@colyseus/playground";
  * Import your Room files
  */
 import { MyRoom } from "./rooms/MyRoom";
+import "reflect-metadata";
+import { AppDataSource } from "./data-source";
 
 export default config({
 
@@ -14,7 +16,6 @@ export default config({
          * Define your room handlers:
          */
         gameServer.define('my_room', MyRoom);
-
     },
 
     initializeExpress: (app) => {
@@ -40,6 +41,15 @@ export default config({
          * Read more: https://docs.colyseus.io/tools/monitor/#restrict-access-to-the-panel-using-a-password
          */
         app.use("/colyseus", monitor());
+        // establish database connection
+        AppDataSource
+            .initialize()
+            .then(() => {
+                console.log("Data Source has been initialized!")
+            })
+            .catch((err) => {
+                console.error("Error during Data Source initialization:", err)
+            });
     },
 
 
